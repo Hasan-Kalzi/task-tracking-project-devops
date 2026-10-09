@@ -1,0 +1,21 @@
+FROM python:3.12.14-slim-bookworm
+
+ARG APP_VERSION=dev
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DATABASE_PATH=/data/tasks.db \
+    APP_VERSION=${APP_VERSION}
+LABEL org.opencontainers.image.title="DD2482 task-tracking API" \
+      org.opencontainers.image.version=${APP_VERSION}
+
+WORKDIR /app
+COPY requirements.lock .
+RUN python -m pip install --no-cache-dir --require-hashes --only-binary=:all: -r requirements.lock \
+    && mkdir /data \
+    && chown 10001:10001 /data
+COPY --chown=10001:10001 app/ app/
+USER 10001:10001
+EXPOSE 8000
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=5 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
