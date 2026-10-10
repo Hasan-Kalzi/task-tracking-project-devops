@@ -1,0 +1,6 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        APP_VERSION: dev

@@ -1,4 +1,4 @@
-# AI assistance — first implementation increment
+# AI assistance — implementation increments
 
 Date: 9 October 2026. Tool: ChatGPT Work / Codex. Requester: Hasan Kalzi.
 
@@ -10,7 +10,8 @@ infrastructure increment.
 
 The initial full project was prepared with AI assistance. Its public integration is being
 split into reviewable increments; these commits are not a claim of independent authorship.
-Only the first increment's application, tests and development configuration are included here.
+The first increment introduced the application, tests and development configuration.
+Subsequent implementation increments are recorded below.
 
 The exported first increment was checked by Codex on Linux/Python 3.12.14: 25 tests passed
 and Ruff lint/format checks passed. One upstream TestClient deprecation warning was reported.
@@ -46,3 +47,25 @@ in the test output point to the global Python 3.12 installation, so this run is 
 of successful installation or testing inside the project virtual environment. Codex supplied
 commands to create `.venv` and use its Python executable explicitly; that isolated rerun
 remains pending. The transcript does not establish completed code review or Love's execution.
+
+## Docker/Compose increment — 9 October 2026
+
+Codex prepared Dockerfile, `.dockerignore`, runtime/build Compose files and the
+standard-library container check from the existing AI-assisted private baseline, plus
+updated README and this log for `feature/docker-compose`. This is the second planned
+public increment. At preparation time public PR #1 is open and requests Love's review;
+the new branch should be created from main after that PR is merged.
+
+All five container files exactly match the baseline that passed private GitHub CI on
+`65103a0f59b94b7ea2f31cd48068880f495c875b`:
+https://github.com/Hasan-Kalzi/KTH-DD2482-Devops/actions/runs/37928004590 . That run verified
+Compose configuration, image build, health/version, task operations and named-volume
+persistence after forced container recreation. This is private-baseline evidence, not a
+claim that the second public increment has run in CI or on Hasan's Docker Desktop.
+
+Codex verified the combined API/second-increment export on Linux/Python 3.12.14: Ruff lint
+and formatting passed for app/tests/scripts, and 25 tests passed with one upstream
+TestClient deprecation warning. Compose YAML was parsed and its declared service/volume
+relationships checked; Docker is unavailable in the assistant's current environment.
+Local Docker Desktop build/container execution and Love's review remain to be recorded.
+
