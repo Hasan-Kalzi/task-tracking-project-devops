@@ -69,3 +69,6 @@ TestClient deprecation warning. Compose YAML was parsed and its declared service
 relationships checked; Docker is unavailable in the assistant's current environment.
 Local Docker Desktop build/container execution and Love's review remain to be recorded.
 
+## Docker integration test mismatch during CI workflow - 11 October 2026
+
+When implementing the Docker integration test for the CI workflow, it initially failed because there was a mismatch between the expected `APP_VERSION` and the actual version. Love used ChatGPT to debug the issue by first inspecting the CI logs and then trace how the version environment variable was passed through the `container_check.py` and `compose.yaml` files. It was discovered that the test's `--version` argument wasn't being forwarded to the running container properly, therefore defaulting to `dev`.

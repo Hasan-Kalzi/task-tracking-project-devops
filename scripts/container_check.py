@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--image", required=True)
     parser.add_argument("--version", required=True)
     args = parser.parse_args()
-    env = os.environ | {"TASK_API_IMAGE": args.image, "API_PORT": "0"}
+    env = os.environ | {"TASK_API_IMAGE": args.image, "API_PORT": "0", "APP_VERSION": args.version}
     command = [
         "docker",
         "compose",
