@@ -1,0 +1,104 @@
+---
+- name: Deploy a previously tested image archive
+  hosts: task_api
+  become: true
+  gather_facts: false
+  vars:
+    task_api_image: "task-api:{{ task_api_version }}"
+    task_api_port: 8000
+  tasks:
+    - name: Validate release inputs before changing the host
+      ansible.builtin.assert:
+        that:
+          - task_api_version is defined
+          - task_api_version is match('^v[0-9]+\.[0-9]+\.[0-9]+$')
+          - task_api_image_id is defined
+          - task_api_image_id is match('^sha256:[0-9a-f]{64}$')
+          - image_archive is defined
+          - task_api_port | int > 0
+          - task_api_port | int < 65536
+        fail_msg: Supply version, image ID and local archive from the verified release manifest.
+
+    - name: Copy image archive without rebuilding
+      ansible.builtin.copy:
+        src: "{{ image_archive }}"
+        dest: /opt/task-api/image.tar.gz
+        mode: '0644'
+
+    - name: Check whether the exact image is already loaded
+      ansible.builtin.command:
+        argv: [docker, image, inspect, --format, !unsafe '{{.Id}}', "{{ task_api_image }}"]
+      register: existing_image
+      failed_when: false
+      changed_when: false
+
+    - name: Reject conflicting reuse of a release tag
+      ansible.builtin.assert:
+        that:
+          - existing_image.rc != 0 or existing_image.stdout == task_api_image_id
+        fail_msg: The existing image tag points to a different image. Use an immutable release tag.
+
+    - name: Load the delivered image when absent
+      ansible.builtin.command:
+        argv: [docker, load, --input, /opt/task-api/image.tar.gz]
+      when: existing_image.rc != 0
+      changed_when: true
+
+    - name: Read the loaded image ID
+      ansible.builtin.command:
+        argv: [docker, image, inspect, --format, !unsafe '{{.Id}}', "{{ task_api_image }}"]
+      register: loaded_image
+      changed_when: false
+
+    - name: Require the tested image from the manifest
+      ansible.builtin.assert:
+        that: loaded_image.stdout == task_api_image_id
+
+    - name: Configure the single-instance runtime
+      ansible.builtin.copy:
+        src: ../compose.yaml
+        dest: /opt/task-api/compose.yaml
+        mode: '0644'
+
+    - name: Select the release and loopback port
+      ansible.builtin.copy:
+        content: "TASK_API_IMAGE={{ task_api_image }}\nAPI_PORT={{ task_api_port }}\n"
+        dest: /opt/task-api/.env
+        mode: '0644'
+
+    - name: Read the previous container ID
+      ansible.builtin.command:
+        argv: [docker, compose, -p, task-api, -f, /opt/task-api/compose.yaml, ps, -q, api]
+        chdir: /opt/task-api
+      register: before_container
+      changed_when: false
+
+    - name: Start the selected release and wait for storage-aware health
+      ansible.builtin.command:
+        argv: [docker, compose, -p, task-api, -f, /opt/task-api/compose.yaml,
+               up, -d, --wait, --wait-timeout, '60']
+        chdir: /opt/task-api
+      register: start_result
+      changed_when: >-
+        'Created' in start_result.stderr or 'Recreated' in start_result.stderr
+        or 'Started' in start_result.stderr
+
+    - name: Read the deployed container ID
+      ansible.builtin.command:
+        argv: [docker, compose, -p, task-api, -f, /opt/task-api/compose.yaml, ps, -q, api]
+        chdir: /opt/task-api
+      register: after_container
+      changed_when: after_container.stdout != before_container.stdout
+
+    - name: Confirm the HTTP version on the host
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ task_api_port }}/health"
+        return_content: true
+        status_code: 200
+      register: deployed_health
+
+    - name: Require the expected application version
+      ansible.builtin.assert:
+        that:
+          - deployed_health.json.status == 'ok'
+          - deployed_health.json.version == task_api_version

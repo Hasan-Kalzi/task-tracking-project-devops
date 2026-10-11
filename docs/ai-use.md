@@ -69,6 +69,31 @@ TestClient deprecation warning. Compose YAML was parsed and its declared service
 relationships checked; Docker is unavailable in the assistant's current environment.
 Local Docker Desktop build/container execution and Love's review remain to be recorded.
 
-## Docker integration test mismatch during CI workflow - 11 October 2026
+## Ansible infrastructure increment — 10 October 2026
 
-When implementing the Docker integration test for the CI workflow, it initially failed because there was a mismatch between the expected `APP_VERSION` and the actual version. Love used ChatGPT to debug the issue by first inspecting the CI logs and then trace how the version environment variable was passed through the `container_check.py` and `compose.yaml` files. It was discovered that the test's `--version` argument wasn't being forwarded to the running container properly, therefore defaulting to `dev`.
+Codex checked public progress: API PR #1 is merged (9 October at 22:53 Stockholm);
+Docker PR #2 is open at `90a1c3b7`, with Love requested as reviewer and no submitted
+review at preparation time. No new local Docker output was supplied. The third
+branch should start from main after PR #2 is merged.
+
+Codex prepared the three unchanged Ansible provisioning/deployment/inventory files
+from the existing private baseline, added controller/provisioning documentation,
+and extended development inputs/lock with Ansible and PyYAML. Ansible and its
+controller dependencies are conditional on non-Windows platforms so native
+Windows API/test installs remain supported. Linux/WSL needs a separate Linux
+virtual environment; the deployment target is a separate Ubuntu 24.04 x86_64 VM.
+
+Codex checked the combined API/Docker/third export on Linux/Python 3.12.14:
+fresh hash-required binary installation, pip dependency consistency, Ruff lint and
+format checks, 25 tests and both Ansible syntax checks passed. One upstream
+TestClient deprecation warning remains. A separate Windows resolution matched all
+25 applicable package pins; 25 Windows-compatible wheel hashes and conditional
+dependency closure were verified from Linux. Ansible is excluded and colorama
+included on Windows. This is not Windows application/test execution.
+
+Codex supplied an eight-file ZIP and complete branch/check/provision/commit/PR
+guide for Hasan's manual public integration. No assistant writes to the public
+repository were made. Clean-VM provisioning/repeatability, release-archive
+deployment, rollback, current isolated Windows execution and partner reproduction
+remain to be evidenced. Deployment commands must use real verified release inputs,
+introduced in the fifth increment; syntax-check values are not release evidence.

@@ -1,0 +1,37 @@
+---
+- name: Prepare the supported task API host
+  hosts: task_api
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Require the documented OS and release-image architecture
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.distribution == 'Ubuntu'
+          - ansible_facts.distribution_version == '24.04'
+          - ansible_facts.architecture == 'x86_64'
+        fail_msg: Use a clean Ubuntu 24.04 x86_64 VM for this implementation.
+
+    - name: Install Docker and Compose from Ubuntu repositories
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+          - ca-certificates
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Enable the container engine
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create a deployment directory
+      ansible.builtin.file:
+        path: /opt/task-api
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
