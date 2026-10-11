@@ -62,7 +62,7 @@
 
     - name: Select the release and loopback port
       ansible.builtin.copy:
-        content: "TASK_API_IMAGE={{ task_api_image }}\nAPI_PORT={{ task_api_port }}\n"
+        content: "TASK_API_IMAGE={{ task_api_image }}\nAPP_VERSION={{ task_api_version }}\nAPI_PORT={{ task_api_port }}\n"
         dest: /opt/task-api/.env
         mode: '0644'
 
