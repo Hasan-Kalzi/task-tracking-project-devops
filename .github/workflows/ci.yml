@@ -44,3 +44,6 @@ jobs:
             -f compose.yaml \
             -f compose.build.yaml \
             build --pull
+
+      - name: Run Docker integration and persistence tests
+        run: python scripts/container_check.py --image task-api:ci --version ci
