@@ -19,7 +19,7 @@ jobs:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: requirements-dev.lock
-      
+
       - name: Install dependencies
         run: |
           python -m pip install \
@@ -35,3 +35,12 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q
+
+      - name: Build Docker image
+        env:
+          TASK_API_IMAGE: task-api:ci
+        run: |
+          docker compose \
+            -f compose.yaml \
+            -f compose.build.yaml \
+            build --pull
