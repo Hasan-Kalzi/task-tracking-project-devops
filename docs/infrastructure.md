@@ -1,8 +1,8 @@
 # Ansible infrastructure
 
 The controller runs Ansible and connects over SSH to a separate target VM.
-Use an Ubuntu 24.04 controller with Python 3.12; WSL Ubuntu can be used for local
-development. Native Windows cannot run the Ansible controller. Keep a WSL virtual
+Use a Linux controller with Python 3.12. Ubuntu 24.04 is the reference environment;
+WSL Ubuntu can be used for local development with a managed Python 3.12 interpreter. Native Windows cannot run the Ansible controller. Keep a WSL virtual
 environment in its Linux home directory, separate from the Windows environment.
 WSL is a development option, not an officially supported production controller.
 
@@ -26,10 +26,24 @@ Ansible's password prompts; do not place passwords/private keys in tracked files
 
 ## Controller setup and static checks
 
-Run from the repository root on the Linux controller:
+Run from a Linux-home checkout, with [uv](https://docs.astral.sh/uv/getting-started/installation/)
+installed. Hasan's WSL Ubuntu 26.04 has no `python3.12-venv` apt package; its managed
+Python 3.12.14 interpreter is independent of the system Python. Do not copy a
+Windows `.venv` into WSL or use WSL as evidence of the separate Ubuntu 24.04 target.
+
+If uv is absent, bootstrap it from its official installer:
 
 ```bash
-python3.12 -m venv .venv &&
+sudo apt-get update &&
+sudo apt-get install -y curl ca-certificates openssh-client rsync sshpass &&
+curl -LsSf https://astral.sh/uv/install.sh -o /tmp/dd2482-uv-install.sh &&
+sh /tmp/dd2482-uv-install.sh
+```
+
+Then, from the repository root:
+
+```bash
+"$HOME/.local/bin/uv" venv --python 3.12.14 --managed-python --seed .venv &&
 ./.venv/bin/python -m pip install --require-hashes --only-binary=:all: -r requirements-dev.lock &&
 ./.venv/bin/python -m pip check &&
 ./.venv/bin/ansible-playbook -i infra/inventory.example.ini infra/provision.yml --syntax-check &&
@@ -67,14 +81,13 @@ produce changes. Inspect Docker/Compose versions and that Docker is active on th
 VM. Distribution packages track Ubuntu updates; they are not pinned to an exact
 Docker version. The provisioning playbook is intended for this dedicated VM.
 
-## Deploy a delivered image in the release increment
+## Deploy a delivered image
 
 Deployment requires the real version, image ID and local image archive from the
-verified release manifest. Release packaging/verification is introduced in the
-fifth increment. Do not run deployment with the syntax-check version or invented
-manifest values.
+verified release manifest. Follow the release asset verification and deployment commands in
+[the runbook](runbook.md). Do not deploy syntax-check values or invented manifest values.
 
-Once that increment is available, verify its release checksums and manifest, then
+Verify the release checksums and manifest, then
 run the documented delivery command from its runbook. Deployment copies the
 archive, rejects an existing version tag pointing at a different image, loads
 the archive without rebuilding, checks the resulting image ID, configures
@@ -88,18 +101,20 @@ data; this setup does not provide authentication or TLS.
 An unchanged deployment should reuse the loaded image and running container.
 That behaviour still needs a repeated real deployment and recorded results.
 A failed deployment can leave a partial update; there is no automatic rollback.
-The later runbook documents selecting a compatible previous release. Image
+The runbook documents selecting a compatible previous release. Image
 rollback does not revert SQLite schema or task data. Keep the named volume and
 verify persistence after recreation; never use `down -v` on the real data stack.
 
 ## Evidence
 
-Codex checked the prepared third increment on Linux/Python 3.12.14: hash-required
+AI checked the prepared third increment on Linux/Python 3.12.14: hash-required
 binary installation, dependency consistency, Ruff lint/format, 25 tests and both
 Ansible syntax checks passed. One upstream TestClient deprecation warning remains.
 Windows-target dependency/wheel validation is recorded in [the AI log](ai-use.md).
-Clean-VM provisioning, repeat deployment, rollback and partner reproduction must
-be recorded when executed. Syntax checks alone do not establish those results.
+Public PR #4's checked checklist reports Windows/controller checks, clean-VM provisioning,
+a repeat with changed=0 and Love's review/reproduction. Retain the actual environment details
+and logs alongside that reported evidence. Release deployment, repeated deployment and
+rollback still require results. Syntax checks alone do not establish runtime behaviour.
 
 Sources: [Ansible controller platforms](https://docs.ansible.com/projects/ansible-core/2.19/os_guide/intro_windows.html),
 [Ubuntu Compose package](https://packages.ubuntu.com/noble/docker-compose-v2).

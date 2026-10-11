@@ -1,0 +1,67 @@
+name: Task API delivery
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: task-api-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12.14'
+          cache: pip
+          cache-dependency-path: requirements-dev.lock
+
+      - name: Validate release tag
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected vMAJOR.MINOR.PATCH" >&2
+            exit 1
+          fi
+          echo "TASK_VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+
+      - name: Install locked tooling
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r requirements-dev.lock
+          python -m pip check
+
+      - name: Gate delivery on lint, tests, IaC and container checks
+        run: bash scripts/checks.sh "$TASK_VERSION"
+
+      - name: Package the exact tested image
+        run: python scripts/package_release.py "$TASK_VERSION"
+
+      - name: Publish the completed delivery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --draft \
+            --title "Task API $TASK_VERSION" \
+            --notes "Tested linux/amd64 image, deployment bundle, manifest and SHA256 checksums. See docs/runbook.md for deployment and rollback."
+          gh release upload "$GITHUB_REF_NAME" dist/*
+          gh release edit "$GITHUB_REF_NAME" --draft=false
+
+      - name: Retain test evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: task-api-release-results
+          path: evidence/
+          if-no-files-found: ignore
