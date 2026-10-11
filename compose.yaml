@@ -5,6 +5,7 @@ services:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     environment:
       DATABASE_PATH: /data/tasks.db
+      APP_VERSION: ${APP_VERSION:-dev}
     volumes:
       - task-data:/data
     read_only: true
