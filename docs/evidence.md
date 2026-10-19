@@ -1,3 +1,22 @@
+# Current verification status on 17 October 2026
+
+The earlier preparation notes below are historical snapshots. The current
+verification records are:
+
+- [Student-executed VM upgrade and rollback on 11 October](verification/rollback-20261011.md).
+- [Failed pytest check blocked delivery on 17 October](verification/failure-blocking-20261017.md).
+- [Successful v0.1.1 delivery](https://github.com/Hasan-Kalzi/task-tracking-project-devops/actions/runs/38172535183).
+- [Published v0.1.1 assets](https://github.com/Hasan-Kalzi/task-tracking-project-devops/releases/tag/v0.1.1).
+
+The controlled v0.1.2 delivery failed as intended; packaging/publication were
+skipped and the release API returned 404. Its failing test branch stays unmerged.
+The original saved task survived the v0.1.0 to v0.1.1 upgrade and return to v0.1.0.
+
+The report correction must cite the dated evidence, remove contradictory rollback
+statements and remain within 2-3 pages.
+
+## Historical preparation notes
+
 # Verification evidence
 
 This file separates observed output, student-reported checks and work still to run.

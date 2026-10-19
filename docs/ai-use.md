@@ -1,6 +1,6 @@
 # AI assistance — implementation increments
 
-Historical entries begin on 9 October 2026; latest preparation: 11 October 2026.
+Historical entries begin on 9 October 2026; latest update: 17 October 2026.
 Date of initial implementation: 9 October 2026. Tool: ChatGPT Work. Requester: Hasan Kalzi.
 
 AI helped the students guiding them to generate the initial FastAPI/SQLite API, pytest tests and Ruff configuration. It helped and gave instructions
@@ -125,3 +125,25 @@ PR #4's checklist reports isolated Windows/controller/VM checks, immediate provi
 repeat and Love review/reproduction. Its actual logs/environment details have not been
 inspected by AI. A new release delivery run, fresh merged clone, release deployment,
 repeat deployment, compatible-version rollback and final 2–3-page report remain to run.
+
+## Report correction and controlled failure test on 17 October 2026
+
+The grader found contradictory rollback statements and a missing demonstration of
+failed checks blocking delivery. Hasan prepared (with AI help) the controlled failing pytest
+test, operator instructions, evidence records and a consolidated report revision.
+Hasan ran and pushed the isolated experiment. GitHub Actions run 39058760546
+recorded 25 passing tests and the one deliberate failure; packaging/publication
+were skipped and no v0.1.2 release was present at verification.
+
+The rollback record is retrospective: it records Hasan's terminal results from
+11 October, with the corrected deployment playbook used for both versions.
+It is not a new assistant-executed VM test. The assistant inspected the real
+GitHub workflow output and job conclusions for the failure experiment.
+
+The evidence record also discloses the experiment restart and identifies the
+final full commit SHA and run ID. The failing test is kept on its experiment
+branch and is not introduced into main.
+
+The revised report must link this immutable evidence commit and remain within
+2-3 pages. Hasan and Love remain responsible for reviewing the final wording
+and understanding the system.

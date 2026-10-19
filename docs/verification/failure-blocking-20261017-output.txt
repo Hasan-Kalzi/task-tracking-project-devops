@@ -1,0 +1,50 @@
+Source: https://github.com/Hasan-Kalzi/task-tracking-project-devops/actions/runs/39058760546
+Job: 117472135078
+Commit: f0db00bff239e5daefbd67a96fbb243e2dc02d89
+Copied from GitHub Actions logs; lines below retain their original timestamps.
+
+2026-10-17T18:35:41.8236408Z No broken requirements found.
+2026-10-17T18:35:41.8424958Z ##[group]Run bash scripts/checks.sh "$TASK_VERSION"
+2026-10-17T18:35:41.8425207Z [36;1mbash scripts/checks.sh "$TASK_VERSION"[0m
+2026-10-17T18:35:41.8479175Z shell: /usr/bin/bash -e {0}
+2026-10-17T18:35:41.8479314Z env:
+2026-10-17T18:35:41.8479468Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-17T18:35:41.8479712Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-10-17T18:35:41.8479950Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-17T18:35:41.8480160Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-17T18:35:41.8480371Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-10-17T18:35:41.8480586Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-10-17T18:35:41.8480766Z   TASK_VERSION: v0.1.2
+2026-10-17T18:35:41.8480890Z ##[endgroup]
+2026-10-17T18:35:41.9824541Z No broken requirements found.
+2026-10-17T18:35:42.0169185Z All checks passed!
+2026-10-17T18:35:42.0358376Z 8 files already formatted
+2026-10-17T18:35:43.8851797Z .........................F                                               [100%]
+2026-10-17T18:35:43.8852558Z =================================== FAILURES ===================================
+2026-10-17T18:35:43.8852915Z ______________________ test_release_gate_negative_control ______________________
+2026-10-17T18:35:43.8853154Z
+2026-10-17T18:35:43.8853259Z     def test_release_gate_negative_control():
+2026-10-17T18:35:43.8853507Z         actual = "deliberate failure"
+2026-10-17T18:35:43.8853752Z         expected = "passing release gate"
+2026-10-17T18:35:43.8854127Z >       assert actual == expected, "Intentional failure for the DD2482 delivery-gate experiment"
+2026-10-17T18:35:43.8854642Z E       AssertionError: Intentional failure for the DD2482 delivery-gate experiment
+2026-10-17T18:35:43.8855036Z E       assert 'deliberate failure' == 'passing release gate'
+2026-10-17T18:35:43.8855300Z E
+2026-10-17T18:35:43.8855497Z E         - passing release gate
+2026-10-17T18:35:43.8855715Z E         + deliberate failure
+2026-10-17T18:35:43.8855849Z
+2026-10-17T18:35:43.8856146Z tests/test_release_gate_failure.py:7: AssertionError
+2026-10-17T18:35:43.8856447Z =============================== warnings summary ===============================
+2026-10-17T18:35:43.8856902Z ../../../../../opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/fastapi/testclient.py:1
+2026-10-17T18:35:43.8857900Z   /opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+2026-10-17T18:35:43.8858695Z     from starlette.testclient import TestClient as TestClient  # noqa
+2026-10-17T18:35:43.8858929Z
+2026-10-17T18:35:43.8859117Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-10-17T18:35:43.8859485Z =========================== short test summary info ============================
+2026-10-17T18:35:43.8860128Z FAILED tests/test_release_gate_failure.py::test_release_gate_negative_control - AssertionError: Intentional failure for the DD2482 delivery-gate experiment
+2026-10-17T18:35:43.8860709Z assert 'deliberate failure' == 'passing release gate'
+2026-10-17T18:35:43.8860959Z
+2026-10-17T18:35:43.8861124Z   - passing release gate
+2026-10-17T18:35:43.8861325Z   + deliberate failure
+2026-10-17T18:35:43.8861520Z 1 failed, 25 passed, 1 warning in 1.51s
+2026-10-17T18:35:43.9296451Z ##[error]Process completed with exit code 1.

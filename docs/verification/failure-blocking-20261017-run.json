@@ -1,0 +1,99 @@
+{
+  "source": "https://github.com/Hasan-Kalzi/task-tracking-project-devops/actions/runs/39058760546",
+  "head_sha": "f0db00bff239e5daefbd67a96fbb243e2dc02d89",
+  "tag": "v0.1.2",
+  "workflow_conclusion": "failure",
+  "observed_on": "2026-10-17",
+  "jobs": [
+    {
+      "id": 117472135078,
+      "name": "deliver",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 39058760546,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Check out tagged source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Set up Python",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Validate release tag",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install locked tooling",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Gate delivery on lint, tests, IaC and container checks",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6
+        },
+        {
+          "name": "Package the exact tested image",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Publish the completed delivery",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Retain test evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Set up Python",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Post Check out tagged source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        }
+      ]
+    }
+  ],
+  "release_query": {
+    "endpoint": "https://api.github.com/repos/Hasan-Kalzi/task-tracking-project-devops/releases/tags/v0.1.2",
+    "http_status": 404
+  },
+  "artifact": {
+    "id": 12110093060,
+    "name": "task-api-release-results"
+  }
+}
